@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider   = "prisma-client"
+  output     = "./generated"
+  engineType = "client"
+  importFileExtension =  "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USER MODEL
+// ============================================
+// Stores user account information (compatible with NextAuth)
+// Example User model (compatible with NextAuth)
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // Hashed password, question mark for when it is nullable when user uses OAuth
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  boards        Board[] // One user can have many boards
+  accounts      Account[] // NextAuth: OAuth accounts linked to this user
+  sessions      Session[] // NextAuth: Active sessions for this user
+
+  // Indexing (Keep in mind that prisma automatically index @id and @unique fields)
+  @@index([email]) // Additional index for faster email look up
+  @@map("users")
+}
+
+// ============================================
+// NEXTAUTH MODELS (Required for authentication)
+// ============================================
+
+// Stores OAuth provider accounts (Google, GitHub, etc.)
+model Account{
+  id                 String    @id @default(cuid())
+  userId             String    // Foreign key to User
+  type               String    // OAuth provider type (e.g., "oauth", "credentials")
+  provider           String    // Provider name (e.g., "google", "github")
+  providerAccountId  String    // User's ID from the OAuth provider  
+  refresh_token      String?   // OAuth refresh token (Optional)
+  access_token       String?   // OAuth access token (Optional)
+  expires_at         Int?      // OAuth token expiration time (Optional)
+  token_type         String?   // Token type usually is bearer
+  scope              String?   // OAuth Scope granted 
+  id_token           String?   // OpenID connect ID token 
+  session_state      String?   // OAuth session state (Optional)
+
+  // Relationships
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Composite unique constraint: one account per provider per user
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+
+}
+
+// Stores active user sessions
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique // Unique session token
+  userId       String   // Foreign key to User
+  expires      DateTime // When the session expires
+  
+  // Relationships
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@map("sessions")
+}
+
+// Stores email verification tokens (for email/password auth)
+model VerificationToken {
+  identifier String   // Email address
+  token      String   @unique // Verification token
+  expires    DateTime // When the token expires
+  
+  // Composite unique constraint: one token per email
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+
+// ============================================
+// BOARD MODEL
+// ============================================
+// Represents a project board (like a Trello board)
+model Board {
+  id          String    @id @default(cuid())
+  title       String    // Board name
+  description String?   // Question Mark is for identifying that the field is optional 
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Foreign Key: Links board to its owner
+  ownerId     String  
+
+  // Relationships
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  lists       List[]    // One board has many lists
+
+  // Indexes for performance 
+  @@index([ownerId]) // Fast lookup of all board by a user
+  @@map("boards")   // Custom table name (optional, users "Board" by default)
+}
+
+
+// ============================================
+// LIST MODEL (Columns)
+// ============================================
+// Represents a column/list within a board (e.g., "To Do", "In Progress", "Done")
+model List {
+  id        String   @id @default(cuid())
+  title     String   // List name (e.g., "To Do", "In Progress")
+  position  Int      @default(0) // Order of lists within a board (for drag-and-drop)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Key: Links list to its board
+  boardId   String
+  
+  // Relationships
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  tasks     Task[]   // One list has many tasks
+  
+  // Indexes
+  @@index([boardId])        // Fast lookup of all lists in a board
+  @@index([boardId, position]) // Composite index for ordered queries
+  @@map("lists")
+}
+
+// ============================================
+// TASK MODEL (Cards)
+// ============================================
+// Represents a task/card within a list
+model Task {
+  id          String    @id @default(cuid())
+  title       String    // Task title (required)
+  description String?   // Optional task description
+  dueDate     DateTime? // Optional due date
+  labels      String[]  // Array of label strings (e.g., ["urgent", "bug", "feature"])
+  position    Int       @default(0) // Order of tasks within a list (for drag-and-drop)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Foreign Key: Links task to its list
+  listId      String
+  
+  // Relationships
+  list        List      @relation(fields: [listId], references: [id], onDelete: Cascade)
+  
+  // Indexes
+  @@index([listId])           // Fast lookup of all tasks in a list
+  @@index([listId, position]) // Composite index for ordered queries
+  @@map("tasks")
+}
