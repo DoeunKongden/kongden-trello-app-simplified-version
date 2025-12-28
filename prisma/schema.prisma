@@ -168,3 +168,18 @@ model Task {
   @@index([listId, position]) // Composite index for ordered queries
   @@map("tasks")
 }
+
+// ============================================
+// EmailVerifiedToken
+// ============================================
+// represent the verified email from the code comparison
+
+model EmailVerifiedToken{
+  id        String    @id @default(cuid())
+  token     String    @unique 
+  email     String
+  expiredAt DateTime
+
+  @@index([email])
+  @@map("email_verified_tokens")
+}

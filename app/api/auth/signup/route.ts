@@ -3,7 +3,8 @@ import {prisma} from "@/prisma"
 import bcrypt from "bcrypt"
 import {z} from "zod"
 import { v4 as uuidv4 } from "uuid"
-
+import { createHash, randomBytes } from "crypto"
+import { sendVerficationEmail } from "@/lib/sendVerificationEmail"
 
 /**
  * Signup API Route
@@ -22,7 +23,7 @@ const complexRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[
 const signupSchema = z.object({
     name: z.string().min(1, "Name is required").max(100),
     email:z.email('Invalid email address'),
-    password: z.string().regex(complexRegex, "Password is not strong enough. Must be at least 8 characters and include uppercase, lowercase, number and special character.")
+    password: z.string().min(8, "Password must be at least 8 character")
 })
 
 export async function POST(req: Request) {
@@ -88,13 +89,33 @@ export async function POST(req: Request) {
             },
         })
 
+        // 5. Generation verification token
+        const verificationToken = randomBytes(32).toString('hex');
+        const hashedToken = createHash('sha256').update(verificationToken).digest('hex');
+
+        // set expiration time (24 hours)
+        const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+        // save to the database
+        await prisma.emailVerifiedToken.create({
+            data:{
+                token: hashedToken,
+                expiredAt: expires,
+                email
+            }
+        });
+
+
+        // send the verification email to the user
+        await sendVerficationEmail(email, name, verificationToken)
+
         return NextResponse.json(
             { 
-              user: newUser,
-              message: "User created successfully" 
+                message: 'Account created successfully! Please check your email to verify your account.',
+                user: newUser, // return user created data without the passsword
             },
             { status: 201 }
-          )
+          );
 
     } catch (error: any) {
         
@@ -105,12 +126,11 @@ export async function POST(req: Request) {
                 {status: 400}
             )
         }
-
         console.log('Signup error:', error);
 
         // Don't expose internal error to client
         return NextResponse.json(
-            {error: 'Failed to create account. Please try again.'},
+            {error: 'Internal server error. Please come back in 2000 years'},
             {status: 500}
         )
     }

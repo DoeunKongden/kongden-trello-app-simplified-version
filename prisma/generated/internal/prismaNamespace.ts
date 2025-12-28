@@ -390,7 +390,8 @@ export const ModelName = {
   VerificationToken: 'VerificationToken',
   Board: 'Board',
   List: 'List',
-  Task: 'Task'
+  Task: 'Task',
+  EmailVerifiedToken: 'EmailVerifiedToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -406,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "board" | "list" | "task"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "board" | "list" | "task" | "emailVerifiedToken"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -928,6 +929,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EmailVerifiedToken: {
+      payload: Prisma.$EmailVerifiedTokenPayload<ExtArgs>
+      fields: Prisma.EmailVerifiedTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmailVerifiedTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmailVerifiedTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.EmailVerifiedTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmailVerifiedTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>
+        }
+        findMany: {
+          args: Prisma.EmailVerifiedTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>[]
+        }
+        create: {
+          args: Prisma.EmailVerifiedTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>
+        }
+        createMany: {
+          args: Prisma.EmailVerifiedTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmailVerifiedTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.EmailVerifiedTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>
+        }
+        update: {
+          args: Prisma.EmailVerifiedTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmailVerifiedTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmailVerifiedTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmailVerifiedTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmailVerifiedTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailVerifiedTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.EmailVerifiedTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmailVerifiedToken>
+        }
+        groupBy: {
+          args: Prisma.EmailVerifiedTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmailVerifiedTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmailVerifiedTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmailVerifiedTokenCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1055,6 +1130,16 @@ export const TaskScalarFieldEnum = {
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const EmailVerifiedTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  email: 'email',
+  expiredAt: 'expiredAt'
+} as const
+
+export type EmailVerifiedTokenScalarFieldEnum = (typeof EmailVerifiedTokenScalarFieldEnum)[keyof typeof EmailVerifiedTokenScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1244,6 +1329,7 @@ export type GlobalOmitConfig = {
   board?: Prisma.BoardOmit
   list?: Prisma.ListOmit
   task?: Prisma.TaskOmit
+  emailVerifiedToken?: Prisma.EmailVerifiedTokenOmit
 }
 
 /* Types for Logging */

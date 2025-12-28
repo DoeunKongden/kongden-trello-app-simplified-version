@@ -57,7 +57,8 @@ export const ModelName = {
   VerificationToken: 'VerificationToken',
   Board: 'Board',
   List: 'List',
-  Task: 'Task'
+  Task: 'Task',
+  EmailVerifiedToken: 'EmailVerifiedToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -164,6 +165,16 @@ export const TaskScalarFieldEnum = {
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const EmailVerifiedTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  email: 'email',
+  expiredAt: 'expiredAt'
+} as const
+
+export type EmailVerifiedTokenScalarFieldEnum = (typeof EmailVerifiedTokenScalarFieldEnum)[keyof typeof EmailVerifiedTokenScalarFieldEnum]
 
 
 export const SortOrder = {

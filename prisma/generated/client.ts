@@ -74,3 +74,8 @@ export type List = Prisma.ListModel
  * 
  */
 export type Task = Prisma.TaskModel
+/**
+ * Model EmailVerifiedToken
+ * 
+ */
+export type EmailVerifiedToken = Prisma.EmailVerifiedTokenModel
