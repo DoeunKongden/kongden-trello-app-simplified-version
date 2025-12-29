@@ -16,7 +16,7 @@ export const sendVerficationEmail = async (email: string, name: string ,token: S
 
     try {
         const {data,error} = await resend.emails.send({
-            from: "KongdenApp <doeunkongden@kongden.space>",
+            from: "KongdenApp <kongden-app@kongden.space>",
             to:email,
             subject: 'Verify your email address',
             html: emailHtml,
