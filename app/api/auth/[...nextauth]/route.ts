@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/prisma";
 import bcrypt from "bcrypt";
+import { record } from "zod";
 
 /**
  * Next Auth Configuration
@@ -34,48 +35,44 @@ export const authOptions: NextAuthOptions = {
         // Email and Password Providers (Credentials)
         CredentialsProvider({
             name: 'Credentials',
-            credentials:{
-                email: {label: "Email", type: "email", placeholder: "your@email.com" },
+            credentials: {
+                email: { label: "Email", type: "email", placeholder: "your@email.com" },
                 password: { label: "Password", type: "password" }
             },
 
-            async authorize(credentials){
-                // This function will run when user try to sign in with email and password
-                if (!credentials?.email || !credentials?.password){
-                    throw new Error('Email and password are required')
+            async authorize(credentials) {
+
+                console.log("credentials login", credentials)
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error('Please enter both email & password')
+                };
+
+                //Finding user
+                const recordUser = await prisma.user.findUnique({
+                    where: { email: credentials?.email.toLowerCase() }
+                });
+
+                if (!recordUser || !recordUser.password) {
+                    throw new Error('Invalid email or password');
                 }
 
-                // Find user in database
-                const user = await prisma.user.findUnique({
-                    where:{
-                        email: credentials.email
-                    }
-                })
-
-                if (!user) {
-                    throw new Error('User not found');
+                if (!recordUser.emailVerified) {
+                    throw new Error('Please verify your email address first. Check your inbox or spam folder.')
                 }
 
-                // Check for password nullable before comparing 
-                if(!user.password){
-                    throw new Error('Password is not set for this user')
-                }
+                // compare password
+                const isValidPassword = await bcrypt.compare(credentials?.password, recordUser?.password)
 
-                // TODO: Add password hasing
-                const isPasswordValid = await bcrypt.compare(
-                    credentials.password,
-                    user.password
-                )
-                if (!isPasswordValid) {
-                    throw new Error("Invalid email or password")
-                  }
+                if (!isValidPassword) {
+                    throw new Error('Invalid email or password');
+                }
 
                 return {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name,
-                    image: user.image,
-                }
+                    id: recordUser.id,
+                    email: recordUser.email,
+                    name: recordUser.name,
+                    image: recordUser.image
+                };
             }
         }),
 
@@ -86,18 +83,21 @@ export const authOptions: NextAuthOptions = {
     ],
 
     // My own custom page: override default NextAuth pages
-    pages:{
+    pages: {
         signIn: "/login",
         signOut: "/logout",
-        error: "/login", 
+        error: "/login",
     },
 
 
     // Callbacks: are functions that run at different stages
-    callbacks:{
+    callbacks: {
         // Run when a JWT is created or updates
-        async jwt({token, user, account}){
-            if(user){
+        async jwt({ token, user, account }) {
+
+            console.log("Callback Url jwt:", token)
+            console.log("Callback url user:", token)
+            if (user) {
                 token.id = user.id
                 token.email = user.email
             }
@@ -107,9 +107,9 @@ export const authOptions: NextAuthOptions = {
 
 
         // Run whenever a session is checked (getServerSession)
-        async session({session, token}){
+        async session({ session, token }) {
             // Add user ID to session object
-            if(session.user){
+            if (session.user) {
                 session.user.id = token.id as string
             }
             return session
@@ -125,4 +125,4 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions)
 
 
-export {handler as GET, handler as POST}
+export { handler as GET, handler as POST }
