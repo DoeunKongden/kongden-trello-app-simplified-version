@@ -11,11 +11,14 @@ import { Label } from "@/components/ui/label"
 import { Github, Chrome, Loader2, Eye, EyeOff } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
+
 export function SignupForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
-  const { toast } = useToast()
+
+  const {toast} = useToast()
+
   const router = useRouter()
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -114,7 +117,7 @@ export function SignupForm() {
 
       // Redirect to verification page or login
       setTimeout(() => {
-        router.push("/auth/verified")
+        router.push("/auth/check-email")
       }, 1500)
     } catch (error) {
       console.error("Signup error:", error)

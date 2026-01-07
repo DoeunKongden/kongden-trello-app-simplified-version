@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 //Define a middleware function that accept a request type
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
 
     // Firstly we must get the session token
     const token = await getToken({
@@ -20,18 +20,22 @@ export async function middleware(request: NextRequest) {
         pathname.startsWith(path)
     );
 
-    // If trying to access a protected path with no session, get redirect back to login
-    if (isProtectedPath || !token) {
+    //Auth-related paths
+    const authPaths = ["/auth/login", "/auth/signup"];
+    const isAuthPath = authPaths.some((path) => pathname.startsWith(path));
+
+
+    // if trying to access a protected path without a valid token, redirect to login
+    if (isProtectedPath && !token){
         const loginUrl = new URL("/auth/login", request.url);
-        loginUrl.searchParams.set("callbackUrl", pathname); // So they return after login
+        loginUrl.searchParams.set('callbackUrl', pathname);
         return NextResponse.redirect(loginUrl);
     }
 
-    // Allowing access to public path even after they have login 
-    if (token && (pathname === "/auth/login" || pathname === "/auth/signup")) {
+    // If user is already authenticated and tries to access login
+    if(token && isAuthPath){
         return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-
 
     // For all other cases → allow the request to continue
     return NextResponse.next();
@@ -45,8 +49,8 @@ export const config = {
         "/dashboard/:path*",   // All subpaths under /dashboard
         "/boards/:path*",
         "/settings/:path*",
-        "/login",
-        "/signup",
+        "/auth/login",
+        "/auth/signup",
         // Add more protected or public routes here later
     ],
 };

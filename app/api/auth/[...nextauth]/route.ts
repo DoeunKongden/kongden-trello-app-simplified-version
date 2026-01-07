@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import { prisma } from "@/prisma";
 import bcrypt from "bcrypt";
 import { record } from "zod";
@@ -12,7 +13,7 @@ import { record } from "zod";
  * This file sets up authentication for our app using NextAuth.js
  * It configures:
  * 1. Database Adapter (Prisma) - stores sessions and accounts
- * 2. Authentication providers (Email/Password, Google OAuth)
+ * 2. Authentication providers (Email/Password, Google OAuth, GitHub OAuth)
  * 3. Session strategy (JWT or database)
  * 4. Custom pages and callbacks
  */
@@ -79,6 +80,11 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        }),
+
+        GitHubProvider({
+            clientId: process.env.GITHUB_CLIENT_ID as string,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
         })
     ],
 

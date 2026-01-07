@@ -30,6 +30,7 @@ export type BoardMinAggregateOutputType = {
   description: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  backgroundColor: string | null
   ownerId: string | null
 }
 
@@ -39,6 +40,7 @@ export type BoardMaxAggregateOutputType = {
   description: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  backgroundColor: string | null
   ownerId: string | null
 }
 
@@ -48,6 +50,7 @@ export type BoardCountAggregateOutputType = {
   description: number
   createdAt: number
   updatedAt: number
+  backgroundColor: number
   ownerId: number
   _all: number
 }
@@ -59,6 +62,7 @@ export type BoardMinAggregateInputType = {
   description?: true
   createdAt?: true
   updatedAt?: true
+  backgroundColor?: true
   ownerId?: true
 }
 
@@ -68,6 +72,7 @@ export type BoardMaxAggregateInputType = {
   description?: true
   createdAt?: true
   updatedAt?: true
+  backgroundColor?: true
   ownerId?: true
 }
 
@@ -77,6 +82,7 @@ export type BoardCountAggregateInputType = {
   description?: true
   createdAt?: true
   updatedAt?: true
+  backgroundColor?: true
   ownerId?: true
   _all?: true
 }
@@ -159,6 +165,7 @@ export type BoardGroupByOutputType = {
   description: string | null
   createdAt: Date
   updatedAt: Date
+  backgroundColor: string | null
   ownerId: string
   _count: BoardCountAggregateOutputType | null
   _min: BoardMinAggregateOutputType | null
@@ -189,6 +196,7 @@ export type BoardWhereInput = {
   description?: Prisma.StringNullableFilter<"Board"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
+  backgroundColor?: Prisma.StringNullableFilter<"Board"> | string | null
   ownerId?: Prisma.StringFilter<"Board"> | string
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   lists?: Prisma.ListListRelationFilter
@@ -200,6 +208,7 @@ export type BoardOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  backgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   owner?: Prisma.UserOrderByWithRelationInput
   lists?: Prisma.ListOrderByRelationAggregateInput
@@ -214,6 +223,7 @@ export type BoardWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Board"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
+  backgroundColor?: Prisma.StringNullableFilter<"Board"> | string | null
   ownerId?: Prisma.StringFilter<"Board"> | string
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   lists?: Prisma.ListListRelationFilter
@@ -225,6 +235,7 @@ export type BoardOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  backgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   _count?: Prisma.BoardCountOrderByAggregateInput
   _max?: Prisma.BoardMaxOrderByAggregateInput
@@ -240,6 +251,7 @@ export type BoardScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Board"> | Date | string
+  backgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
   ownerId?: Prisma.StringWithAggregatesFilter<"Board"> | string
 }
 
@@ -249,6 +261,7 @@ export type BoardCreateInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  backgroundColor?: string | null
   owner: Prisma.UserCreateNestedOneWithoutBoardsInput
   lists?: Prisma.ListCreateNestedManyWithoutBoardInput
 }
@@ -259,6 +272,7 @@ export type BoardUncheckedCreateInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  backgroundColor?: string | null
   ownerId: string
   lists?: Prisma.ListUncheckedCreateNestedManyWithoutBoardInput
 }
@@ -269,6 +283,7 @@ export type BoardUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owner?: Prisma.UserUpdateOneRequiredWithoutBoardsNestedInput
   lists?: Prisma.ListUpdateManyWithoutBoardNestedInput
 }
@@ -279,6 +294,7 @@ export type BoardUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   lists?: Prisma.ListUncheckedUpdateManyWithoutBoardNestedInput
 }
@@ -289,6 +305,7 @@ export type BoardCreateManyInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  backgroundColor?: string | null
   ownerId: string
 }
 
@@ -298,6 +315,7 @@ export type BoardUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type BoardUncheckedUpdateManyInput = {
@@ -306,6 +324,7 @@ export type BoardUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -325,6 +344,7 @@ export type BoardCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  backgroundColor?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
 }
 
@@ -334,6 +354,7 @@ export type BoardMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  backgroundColor?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
 }
 
@@ -343,6 +364,7 @@ export type BoardMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  backgroundColor?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
 }
 
@@ -413,6 +435,7 @@ export type BoardCreateWithoutOwnerInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  backgroundColor?: string | null
   lists?: Prisma.ListCreateNestedManyWithoutBoardInput
 }
 
@@ -422,6 +445,7 @@ export type BoardUncheckedCreateWithoutOwnerInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  backgroundColor?: string | null
   lists?: Prisma.ListUncheckedCreateNestedManyWithoutBoardInput
 }
 
@@ -460,6 +484,7 @@ export type BoardScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"Board"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
+  backgroundColor?: Prisma.StringNullableFilter<"Board"> | string | null
   ownerId?: Prisma.StringFilter<"Board"> | string
 }
 
@@ -469,6 +494,7 @@ export type BoardCreateWithoutListsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  backgroundColor?: string | null
   owner: Prisma.UserCreateNestedOneWithoutBoardsInput
 }
 
@@ -478,6 +504,7 @@ export type BoardUncheckedCreateWithoutListsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  backgroundColor?: string | null
   ownerId: string
 }
 
@@ -503,6 +530,7 @@ export type BoardUpdateWithoutListsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owner?: Prisma.UserUpdateOneRequiredWithoutBoardsNestedInput
 }
 
@@ -512,6 +540,7 @@ export type BoardUncheckedUpdateWithoutListsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -521,6 +550,7 @@ export type BoardCreateManyOwnerInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  backgroundColor?: string | null
 }
 
 export type BoardUpdateWithoutOwnerInput = {
@@ -529,6 +559,7 @@ export type BoardUpdateWithoutOwnerInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lists?: Prisma.ListUpdateManyWithoutBoardNestedInput
 }
 
@@ -538,6 +569,7 @@ export type BoardUncheckedUpdateWithoutOwnerInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lists?: Prisma.ListUncheckedUpdateManyWithoutBoardNestedInput
 }
 
@@ -547,6 +579,7 @@ export type BoardUncheckedUpdateManyWithoutOwnerInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -586,6 +619,7 @@ export type BoardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  backgroundColor?: boolean
   ownerId?: boolean
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   lists?: boolean | Prisma.Board$listsArgs<ExtArgs>
@@ -598,6 +632,7 @@ export type BoardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  backgroundColor?: boolean
   ownerId?: boolean
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["board"]>
@@ -608,6 +643,7 @@ export type BoardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  backgroundColor?: boolean
   ownerId?: boolean
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["board"]>
@@ -618,10 +654,11 @@ export type BoardSelectScalar = {
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  backgroundColor?: boolean
   ownerId?: boolean
 }
 
-export type BoardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "createdAt" | "updatedAt" | "ownerId", ExtArgs["result"]["board"]>
+export type BoardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "createdAt" | "updatedAt" | "backgroundColor" | "ownerId", ExtArgs["result"]["board"]>
 export type BoardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   lists?: boolean | Prisma.Board$listsArgs<ExtArgs>
@@ -646,6 +683,7 @@ export type $BoardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     description: string | null
     createdAt: Date
     updatedAt: Date
+    backgroundColor: string | null
     ownerId: string
   }, ExtArgs["result"]["board"]>
   composites: {}
@@ -1077,6 +1115,7 @@ export interface BoardFieldRefs {
   readonly description: Prisma.FieldRef<"Board", 'String'>
   readonly createdAt: Prisma.FieldRef<"Board", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Board", 'DateTime'>
+  readonly backgroundColor: Prisma.FieldRef<"Board", 'String'>
   readonly ownerId: Prisma.FieldRef<"Board", 'String'>
 }
     

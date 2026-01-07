@@ -105,6 +105,7 @@ model Board {
   description String?   // Question Mark is for identifying that the field is optional 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  backgroundColor String? @default("blue")
 
   // Foreign Key: Links board to its owner
   ownerId     String  
