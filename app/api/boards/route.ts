@@ -1,61 +1,89 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "@/prisma"
-import { error, timeLog } from "node:console";
+import { handlePrismaError, requireAuth } from "@/lib/api-utils";
+import { createBoardSchema } from "@/lib/validation/board-schema";
+import { z } from "zod"
 
 
 // GET: List all board for authenticated user
 export async function GET(request: NextRequest) {
-    const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
-        return NextResponse.json({ error: "Unauthorized Access" }, { status: 401 });
+    const auth = await requireAuth(request);
+
+    if (auth instanceof Response) return auth; //Unauthorized
+
+    try {
+        const boards = await prisma.board.findMany({
+            where: { ownerId: auth.userId },
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                backgroundColor: true,
+                createdAt: true,
+                updatedAt: true,
+                _count: {
+                    select: { lists: true },
+                }
+            }
+        });
+
+        return NextResponse.json(boards, { status: 200 });
+    } catch (error) {
+        return handlePrismaError(error);
     }
-
-    //If user is authorize 
-    const board = await prisma.board.findMany({
-        where: {
-            ownerId: session.user.id
-        },
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            backgroundColor: true,
-            createdAt: true,
-        },
-    })
-
-    //response the board back to user 
-    return NextResponse.json(board, { status: 200 })
 }
+
+
 
 // POST: Create a new board 
 export async function POST(request: NextRequest) {
-    const session = await getServerSession(authOptions)
+    const auth = await requireAuth(request);
 
-    if (!session?.user?.id) {
-        return NextResponse.json({ error: "Unauthorized Access" }, { status: 401 });
-    }
+    if (auth instanceof Response) return auth;
 
-    const {title,description, backgroundColor='blue'} = await request.json();
+    try {
+        const body = await request.json();
+        const { title, description, backgroundColor } = createBoardSchema.parse(body);
 
-    if(!title.trim()){
-        return NextResponse.json({error: "Title is required"}, {status:400})
-    }
+        const defaultLists = [
+            { title: 'To Do', position: 0 },
+            { title: 'In Progress', position: 65536 },
+            { title: 'Done', position: 131072 },
+        ];
 
-    const board = await prisma.board.create({
-        data:{
-            title: title.trim(),
-            description: description.trim() || null,
-            backgroundColor,
-            ownerId: session?.user?.id
+        const board = await prisma.board.create({
+            data: {
+                title,
+                description,
+                backgroundColor,
+                ownerId: auth.userId as string,
+                lists: {
+                    createMany: {
+                        data: defaultLists,
+                    },
+                },
+            },
+
+            include: {
+                lists: {
+                    orderBy: { position: 'asc' },
+                },
+            },
+        });
+
+        return NextResponse.json(board, { status: 201 })
+    } catch (error) {
+        console.error('Error creating board:', error); // ← Crucial: see the real error
+
+        if (error instanceof z.ZodError) {
+            return NextResponse.json({ error: error }, { status: 400 });
         }
-    })
 
-    return NextResponse.json(board, {status: 201});
+        return NextResponse.json(
+            { error: 'Failed to create board', details: (error as Error).message },
+            { status: 500 }
+        );
+    }
 }
-
-
-

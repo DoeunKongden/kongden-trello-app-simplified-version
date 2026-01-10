@@ -8,4 +8,6 @@ export const createBoardSchema = z.object({
 
 export const updateBoardSchema = z.object({
     title: z.string().min(1).max(100).optional(), // Allow partial updates
+    description: z.string().max(500).optional(),
+    backgroundColor: z.string().optional().nullable()
 })
