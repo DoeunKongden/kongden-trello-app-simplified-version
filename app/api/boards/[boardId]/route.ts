@@ -100,14 +100,51 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     const { boardId } = await params;
 
-    const ownership = await requiredBoardOwnership(boardId, auth.userId);
+    console.log("Delete - boardId received", boardId);
+    console.log("Delete - userId:", auth.userId);
 
-    if (ownership.error) return ownership.error;
+    //cleaned up the boardId incase of extra spacing
+    const trimmedBoardId = boardId?.trim();
+    if (!trimmedBoardId) {
+        return NextResponse.json(
+            { error: 'Board ID is required' },
+            { status: 400 }
+        );
+    }
+
+
+    const ownership = await requiredBoardOwnership(trimmedBoardId, auth.userId);
+
+    if (ownership.error) {
+        console.log("Ownership check failed: ", ownership.error);
+        return ownership.error;
+    }
 
     try {
+        // Double-check the board exists before deleting
+        const boardToDelete = await prisma.board.findUnique({
+            where: { id: trimmedBoardId },
+            select: { id: true, ownerId: true }
+        });
+
+        if (!boardToDelete) {
+            console.log('Board not found in database:', trimmedBoardId);
+            return NextResponse.json(
+                { error: 'Board not found' },
+                { status: 404 }
+            );
+        }
+
+        if (boardToDelete.ownerId !== auth.userId) {
+            return NextResponse.json(
+                { error: 'Forbidden: You do not own this board' },
+                { status: 403 }
+            );
+        }
+
         await prisma.board.delete({
             where: {
-                id: boardId
+                id: trimmedBoardId
             }
         });
 

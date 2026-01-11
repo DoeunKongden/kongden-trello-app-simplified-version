@@ -66,9 +66,15 @@ export async function POST(request: NextRequest) {
                 },
             },
 
-            include: {
-                lists: {
-                    orderBy: { position: 'asc' },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                backgroundColor: true,
+                createdAt: true,
+                updatedAt: true,
+                _count: {
+                    select: { lists: true },
                 },
             },
         });

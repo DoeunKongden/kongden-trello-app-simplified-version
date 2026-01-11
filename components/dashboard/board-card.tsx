@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { deleteBoard } from "@/lib/api/boards";
 import { useToast } from "@/hooks/use-toast";
+import { DeleteBoardDialog } from "./delete-board-dialog";
 
 interface BoardCardProps {
   board: Board;
@@ -18,22 +19,23 @@ export function BoardCard({ board, onDelete }: BoardCardProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleClick = () => {
     router.push(`/boards/${board.id}`);
   };
 
-  const handleDelete = async (e: React.MouseEvent) => {
+  const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    if (!confirm(`Are you sure you want to delete "${board.title}"? This action cannot be undone.`)) {
-      return;
-    }
+    setIsDeleteDialogOpen(true);
+  };
 
+  const handleDeleteConfirm = async () => {
     setIsDeleting(true);
     try {
       await deleteBoard(board.id);
       onDelete(board.id);
+      setIsDeleteDialogOpen(false);
       toast({
         title: "Board deleted",
         description: `"${board.title}" has been deleted successfully.`,
@@ -86,13 +88,21 @@ export function BoardCard({ board, onDelete }: BoardCardProps) {
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleDelete}
+          onClick={handleDeleteClick}
           disabled={isDeleting}
           className="opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
       </CardFooter>
+
+      <DeleteBoardDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        boardTitle={board.title}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+      />
     </Card>
   );
 }
